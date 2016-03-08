@@ -15,6 +15,7 @@
 #include "interval.h"
 #include "functions.h"
 #include "minimizer.h"
+#include "omp.h"
 
 using namespace std;
 
@@ -57,7 +58,7 @@ void minimize(itvfun f,  // Function to minimize
   // Checking whether the input box is small enough to stop searching.
   // We can consider the width of one dimension only since a box
   // is always split equally along both dimensions
-  if (x.width() <= threshold) { 
+  if (x.width() <= threshold) {
     // We have potentially a new minimizer
     ml.insert(minimizer{x,y,fxy.left(),fxy.right()});
     return ;
@@ -67,7 +68,7 @@ void minimize(itvfun f,  // Function to minimize
   // and recursively explore them
   interval xl, xr, yl, yr;
   split_box(x,y,xl,xr,yl,yr);
-
+	
   minimize(f,xl,yl,threshold,min_ub,ml);
   minimize(f,xl,yr,threshold,min_ub,ml);
   minimize(f,xr,yl,threshold,min_ub,ml);
