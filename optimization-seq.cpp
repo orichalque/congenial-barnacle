@@ -16,7 +16,7 @@
 #include "functions.h"
 #include "minimizer.h"
 #include "omp.h"
-
+#include <chrono>
 using namespace std;
 
 
@@ -41,6 +41,7 @@ void minimize(itvfun f,  // Function to minimize
 	      double& min_ub,  // Current minimum upper bound
 	      minimizer_list& ml) // List of current minimizers
 {
+  omp_set_num_threads (2); 
   interval fxy = f(x,y);
   
   if (fxy.left() > min_ub) { // Current box cannot contain minimum?
@@ -50,9 +51,15 @@ void minimize(itvfun f,  // Function to minimize
   if (fxy.right() < min_ub) { // Current box contains a new minimum?
     min_ub = fxy.right();
     // Discarding all saved boxes whose minimum lower bound is 
-    // greater than the new minimum upper bound
-    auto discard_begin = ml.lower_bound(minimizer{0,0,min_ub,0});
-    ml.erase(discard_begin,ml.end());
+    // greater than the new minimum upper bound*
+    
+	
+	#pragma omp critical
+	{
+	  auto discard_begin = ml.lower_bound(minimizer{0,0,min_ub,0});    
+   	  ml.erase(discard_begin,ml.end());
+	}
+
   }
 
   // Checking whether the input box is small enough to stop searching.
@@ -60,6 +67,7 @@ void minimize(itvfun f,  // Function to minimize
   // is always split equally along both dimensions
   if (x.width() <= threshold) {
     // We have potentially a new minimizer
+    #pragma omp critical
     ml.insert(minimizer{x,y,fxy.left(),fxy.right()});
     return ;
   }
@@ -68,11 +76,19 @@ void minimize(itvfun f,  // Function to minimize
   // and recursively explore them
   interval xl, xr, yl, yr;
   split_box(x,y,xl,xr,yl,yr);
-	
-  minimize(f,xl,yl,threshold,min_ub,ml);
-  minimize(f,xl,yr,threshold,min_ub,ml);
-  minimize(f,xr,yl,threshold,min_ub,ml);
-  minimize(f,xr,yr,threshold,min_ub,ml);
+  
+	#pragma omp parallel sections
+	{
+		  #pragma omp section 
+		  minimize(f,xl,yl,threshold,min_ub,ml);
+		  #pragma omp section 
+		  minimize(f,xl,yr,threshold,min_ub,ml);
+		  #pragma omp section 
+		  minimize(f,xr,yl,threshold,min_ub,ml);
+		  #pragma omp section 
+		  minimize(f,xr,yr,threshold,min_ub,ml);
+	}
+
 }
 
 
@@ -119,12 +135,22 @@ int main(void)
   // Asking for the threshold below which a box is not split further
   cout << "Precision? ";
   cin >> precision;
+  auto start_time = chrono::high_resolution_clock::now();
   
   minimize(fun.f,fun.x,fun.y,precision,min_ub,minimums);
   
+  auto end_time = chrono::high_resolution_clock::now();
+  
+  cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
+  cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << ":";
+	
   // Displaying all potential minimizers
   copy(minimums.begin(),minimums.end(),
        ostream_iterator<minimizer>(cout,"\n"));    
   cout << "Number of minimizers: " << minimums.size() << endl;
   cout << "Upper bound for minimum: " << min_ub << endl;
+  
+  cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
+  cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << "  secondes" << endl;
+  
 }
