@@ -87,13 +87,11 @@ void minimize(itvfun f,  // Function to minimize
 int main(int argc, char* argv[])
 {
 	int p, i;
-	MPI_Status status;
   MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 	MPI_Comm_rank(MPI_COMM_WORLD, &i);
 	
-	if (i == 0){
-		cout.precision(16);
+	cout.precision(16);
 		// By default, the currently known upper bound for the minimizer is +oo
 		double min_ub = numeric_limits<double>::infinity();
 		// List of potential minimizers. They may be removed from the list
@@ -113,6 +111,7 @@ int main(int argc, char* argv[])
 
 		//MPI Initialiazing
 
+	if (i == 0){		
 	
 	
 		// Asking the user for the name of the function to optimize
@@ -134,38 +133,53 @@ int main(int argc, char* argv[])
 		    good_choice = false;
 		  }
 		} while(!good_choice);
+	}
+	
+	MPI_Bcast(&choice_fun, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+	if (i != 0){
+		fun = functions.at(choice_fun);
+	}
+	
+	if (i == 0){
 		// Asking for the threshold below which a box is not split further
 		cout << "Precision? ";
 		cin >> precision;
-		
-		auto start_time = chrono::high_resolution_clock::now();
-		double values[4];
-		double[0] = fun.x.left();
-		double[1] = fun.x.right();	
-		double[2] = fun.y.left();
-		double[3] = fun.y.right();		
 	}
+	MPI_Bcast(&precision, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 	
-	MPI_BCast(&values, 4, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  double dist = (abs(fun.x.left()) + abs(fun.x.right()))/p;					
 	
+	double left = fun.x.left() + dist *i;
+	double right =  left + dist;
+	interval inter(left, right);
+
+  double min_final;  
   
-  
+	auto start_time = chrono::high_resolution_clock::now();		
+	{
 	//Scatter/BCast here with MPI
-  minimize(fun.f,fun.x,fun.y,precision,min_ub,minimums);
-  
+  minimize(fun.f, inter, fun.y,precision,min_ub,minimums);
+
+  MPI_Reduce(&min_final, &min_ub, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);  
+  }
   auto end_time = chrono::high_resolution_clock::now();
   
-  cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
-  cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << ":";
+  if (i == 0){
+		cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
+		cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << ":";
 	
-  // Displaying all potential minimizers
-  copy(minimums.begin(),minimums.end(),
-       ostream_iterator<minimizer>(cout,"\n"));    
-  cout << "Number of minimizers: " << minimums.size() << endl;
-  cout << "Upper bound for minimum: " << min_ub << endl;
+		// Displaying all potential minimizers
+		copy(minimums.begin(),minimums.end(),
+		     ostream_iterator<minimizer>(cout,"\n"));    
+		cout << "Number of minimizers: " << minimums.size() << endl;
+		cout << "Upper bound for minimum: " << min_final << endl;
+		
+		cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
+		cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << "  secondes" << endl;
+  }
   
-  cout << "Temps: " << chrono::duration_cast<chrono::seconds>(end_time - start_time).count() << ":";
-  cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time).count() << "  secondes" << endl;
+  MPI_Finalize();
+  
   
 }
