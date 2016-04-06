@@ -15,7 +15,7 @@ BINROOT=
 COMMON_SOURCES = interval.cpp minimizer.cpp functions.cpp
 COMMON_OBJECTS = $(COMMON_SOURCES:.cpp=.o)
 
-CXXFLAGS = -std=gnu++0x -Wall -fopenmp
+CXXFLAGS = -std=gnu++0x -Wall -I -fopenmp
 
 MPICXX = mpic++
 

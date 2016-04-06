@@ -73,10 +73,10 @@ void minimize(itvfun f,  // Function to minimize
   // and recursively explore them
   interval xl, xr, yl, yr;
   split_box(x,y,xl,xr,yl,yr);
-	minimize(f,xl,yl,threshold,min_ub,ml);
-	minimize(f,xl,yr,threshold,min_ub,ml);
-	minimize(f,xr,yl,threshold,min_ub,ml);
-	minimize(f,xr,yr,threshold,min_ub,ml);
+		  minimize(f,xl,yl,threshold,min_ub,ml);
+		  minimize(f,xl,yr,threshold,min_ub,ml);
+		  minimize(f,xr,yl,threshold,min_ub,ml);
+		  minimize(f,xr,yr,threshold,min_ub,ml);
 
 }
 
