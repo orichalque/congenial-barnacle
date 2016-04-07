@@ -25,10 +25,15 @@
     \paragraph{}
     A l'aide de \emph{MPI}, nous avons décidé de paralléliser le programme au début de l’exécution. La boite contenant la fonction est coupée en $N$ sous-boites chacune prise en charges par les $N$ processus.
     Le premier processus demande à l'utilisateur la fonction à analyser puis \emph{broadcast} le choix à tout les autres. Il demande ensuite la précision à l'utilisateur et la \emph{broadcast} aux autres processus.
-    Enfin, chaque processus appelle l'algorithme de \emph{Branch \& Bound} sur sa sous-boite calculée à l'aide du nombre de processus $N$ et de son rang $K$. Le minimum est trouvé en faisant un \emph{reduce} des minimums trouvés par chaque processus.
-    
+    Enfin, chacun appelle l'algorithme de \emph{Branch \& Bound} sur sa sous-boite calculée à l'aide du nombre de processus $N$ et de son rang $K$. Le minimum est trouvé en faisant un \emph{reduce} des minimums trouvés dans chaque sous-espace.
+    \begin{center}
+    \includegraphics[scale=0.7]{min_mpi.png}
+    {\footnotesize
+
+    parallélisation MPI avec 3 processus (figure 1)\par}
+    \end{center}
     \paragraph{}
-    L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace.
+    L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace. Cette parallélisation n'est pas efficace dans le cas ou les minimums possibles se retrouve rapidement dans un espace délimité par un des processus (booth). Dans ce cas son efficacité est semblable à l'algorithme séquentiel. Au contraire, si la fonction est fluctuante (three hump camel), les minimums possibles seront distribués sur chaque processus ce qui augmentera son efficacité.
     \subsection{résultats}
     \paragraph{}
     
@@ -45,6 +50,9 @@
     
 \section{Conclusion}
     \paragraph{}
+    Les résultats de nos jeux d'essais montre que la parallélisation à mémoire partagée permet d'augmenter l'efficacité de l'algorithme de façon significative. Sans les comparer, les résultats de l'exécution de l'algorithme à l'aide de MPI ne permet pas d'améliorer significativement l'efficacité de l'algorithme. En effet, les essais ont été effectué sur un seul ordinateur.
+    
+    L'idéal serait d'allier MPI à la parallélisation à mémoire partagée. Dans ce cas, la boite serait distribuée en fonction du nombre de machines. De plus, chaque ordinateur découperait l'exécution sur ses \emph{threads physiques} disponibles. Cette double parallélisation du code pourrait entraîner une amélioration importante du temps de calcul.
     
     
 
