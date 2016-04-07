@@ -8,16 +8,16 @@
   v. 1.0, 2013-02-15
 */
 
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <stdexcept>
-#include <mpi.h>
 #include "interval.h"
 #include "functions.h"
 #include "minimizer.h"
 #include "omp.h"
 #include <chrono>
+#include <iostream>
+#include <iterator>
+#include <mpi.h>
+#include <stdexcept>
+#include <string>
 
 using namespace std;
 
@@ -49,24 +49,26 @@ void minimize(itvfun f,           // Function to minimize
   if (fxy.left() > min_ub) { // Current box cannot contain minimum?
     return;
   }
-  
+
   if (fxy.right() < min_ub) { // Current box contains a new minimum?
     min_ub = fxy.right();
     // Discarding all saved boxes whose minimum lower bound is
     // greater than the new minimum upper bound*
-    if (procrank == 0){
-		auto discard_begin = ml.lower_bound(minimizer{0, 0, min_ub, 0});
-		ml.erase(discard_begin, ml.end());
-	}
+    if (procrank == 0) {
+      auto discard_begin = ml.lower_bound(minimizer{0, 0, min_ub, 0});
+      ml.erase(discard_begin, ml.end());
+    }
   }
 
   // Checking whether the input box is small enough to stop searching.
   // We can consider the width of one dimension only since a box
   // is always split equally along both dimensions
-  if ((x.width()*numproc) <= threshold) {
+  // We 
+  if ((x.width() * numproc) <= threshold) { //At the begining, x dimension 
+  											//is divided by the number of proc.
     // We have potentially a new minimizer
-    if (procrank == 0){
-    	ml.insert(minimizer{x, y, fxy.left(), fxy.right()});
+    if (procrank == 0) {
+      ml.insert(minimizer{x, y, fxy.left(), fxy.right()});
     }
     return;
   }
@@ -131,14 +133,14 @@ int main(int argc, char *argv[]) {
     choice_size = choice_fun.size();
   }
 
-  MPI_Bcast(&choice_size, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
+  MPI_Bcast(&choice_size, 1, MPI_INT, 0, MPI_COMM_WORLD);//Broadcast
+  
   char buf[choice_size + 1];
 
   if (procrank == 0)
-  	strcpy(buf, choice_fun.c_str());
+    strcpy(buf, choice_fun.c_str());
 
-  MPI_Bcast(&buf, choice_size + 1, MPI_CHAR, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&buf, choice_size + 1, MPI_CHAR, 0, MPI_COMM_WORLD);//Broadcast
   choice_fun.assign(buf, choice_size);
 
   if (procrank != 0) {
@@ -150,7 +152,7 @@ int main(int argc, char *argv[]) {
     cout << "Precision? ";
     cin >> precision;
   }
-  
+
   MPI_Bcast(&precision, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   double dist = (abs(fun.x.left()) + abs(fun.x.right())) / numproc;
@@ -163,26 +165,21 @@ int main(int argc, char *argv[]) {
   double min_final;
 
   auto start_time = chrono::high_resolution_clock::now();
-  
+
   minimize(fun.f, inter, fun.y, precision, min_ub, minimums);
 
-  //MPI_Reduce(&min_ub, &min_final, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&min_ub, &min_final, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
 
   auto end_time = chrono::high_resolution_clock::now();
-  
-  //if (procrank == 0) {
-    // Displaying all potential minimizers
-    //copy(minimums.begin(), minimums.end(),
-         //ostream_iterator<minimizer>(cout, "\n"));
-    cout << "Number of minimizers: " << minimums.size() << endl;
-    cout << "Upper bound for minimum: " << min_ub << endl;
-    cout
-        << "Temps: "
-        << chrono::duration_cast<chrono::seconds>(end_time - start_time).count()
-        << ":";
-    cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time)
-                .count()
-         << "  secondes" << endl;
-  //}
+
+  if (procrank == 0) {
+	  cout << "Upper bound for minimum: " << min_final << endl;
+	  cout << "Temps: "
+		   << chrono::duration_cast<chrono::seconds>(end_time - start_time).count()
+		   << ":";
+	  cout << chrono::duration_cast<chrono::microseconds>(end_time - start_time)
+		          .count()
+		   << "  secondes" << endl;
+  }
   MPI_Finalize();
 }

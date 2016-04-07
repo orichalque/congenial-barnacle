@@ -25,7 +25,10 @@
     \paragraph{}
     A l'aide de \emph{MPI}, nous avons décidé de paralléliser le programme au début de l’exécution. La boite contenant la fonction est coupée en $N$ sous-boites chacune prise en charges par les $N$ processus.
     Le premier processus demande à l'utilisateur la fonction à analyser puis \emph{broadcast} le choix à tout les autres. Il demande ensuite la précision à l'utilisateur et la \emph{broadcast} aux autres processus.
-    Enfin, chaque processus appelle l'algorithme de \emph{Branch \& Bound} sur sa sous-boite calculée à l'aide du nombre de processus $N$ et de son rang $K$. 
+    Enfin, chaque processus appelle l'algorithme de \emph{Branch \& Bound} sur sa sous-boite calculée à l'aide du nombre de processus $N$ et de son rang $K$. Le minimum est trouvé en faisant un \emph{reduce} des minimums trouvés par chaque processus.
+    
+    \paragraph{}
+    L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace.
     \subsection{résultats}
     \paragraph{}
     
