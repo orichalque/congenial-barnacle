@@ -24,7 +24,6 @@ const double NaN = numeric_limits<double>::quiet_NaN();
 const double nsmall = (1.0-2.0*numeric_limits<double>::epsilon());
 const double psmall = (1.0+2.0*numeric_limits<double>::epsilon());
 
-
 const double interval::left(void) const
 {
   return bounds[0];

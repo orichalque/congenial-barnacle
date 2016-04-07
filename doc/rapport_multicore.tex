@@ -7,8 +7,8 @@
 \usepackage{listings}
 
 \title{Projet multicore programming}
-\author{Thibault \bsc{B�ziers la Fosse}, Benjamin \bsc{Moreau}}
-\date{28 F�vrier 2016}
+\author{Thibault \bsc{Bèziers la Fosse}, Benjamin \bsc{Moreau}}
+\date{28 Février 2016}
 
 \begin{document}
 
@@ -16,20 +16,28 @@
 
 \section{Introduction}
     \paragraph{}
-    L'objectif de ce projet est d'impl�menter une version parall�lis�e avec le langage \emph{C++} de l'algorithme de branch \& bound par intervalles afin d'encadrer le minimum d'une fonction de deux variables r�elles.
+    L'objectif de ce projet est d'implémenter une version parallélisée avec le langage \emph{C++} de l'algorithme de branch \& bound par intervalles afin d'encadrer le minimum d'une fonction de deux variables réelles.
     
-    La parall�lisation du code se fera en deux �tapes. Dans un premier temps, nous utiliserons \emph{MPI} pour effectuer le calcul en coop�ration sur plusieurs machines. Dans un second temps, nous parall�liserons le code au sein de chaque machine � l'aide de \emph{OpenMP}. Dans chaque partie, nous justifierons nos choix d'impl�mentation et pr�senterons les r�sultats obtenus.
+    La parallélisation du code se fera en deux étapes. Dans un premier temps, nous utiliserons \emph{MPI} pour effectuer le calcul en coopération sur plusieurs machines. Dans un second temps, nous paralléliserons le code au sein de chaque machine à l'aide de \emph{OpenMP}. Dans chaque partie, nous justifierons nos choix d'implémentation et présenterons les résultats obtenus.
     
-\section{Parall�lisation avec \emph{MPI}}
-    \subsection{Impl�mentation}
+\section{Parallélisation avec \emph{MPI}}
+    \subsection{Implémentation}
     \paragraph{}
-    \subsection{r�sultats}
+    A l'aide de \emph{MPI}, nous avons décidé de paralléliser le programme au début de l’exécution. La boite contenant la fonction est coupée en $N$ sous-boites chacune prise en charges par les $N$ processus.
+    Le premier processus demande à l'utilisateur la fonction à analyser puis \emph{broadcast} le choix à tout les autres. Il demande ensuite la précision à l'utilisateur et la \emph{broadcast} aux autres processus.
+    Enfin, chaque processus appelle l'algorithme de \emph{Branch \& Bound} sur sa sous-boite calculée à l'aide du nombre de processus $N$ et de son rang $K$. 
+    \subsection{résultats}
     \paragraph{}
     
-\section{Parall�lisme � m�moire partag�e avec \emph{OpenMP}}
-    \subsection{Impl�mentation}
+\section{Parallélisme à mémoire partagée avec \emph{OpenMP}}
+	\paragraph{}
+	Nous avons choisis \emph{OpenMP} pour la parallélisation à mémoire partagée car il très facile d'utilisation. De plus, l'utilisation de \emph{pragma} permet à l'utilisateur d'utiliser le code source sans forcement posséder la librairie \emph{OpenMP}. Malgré sa souplesse d'utilisation, il offre de bonnes performances.
+    \subsection{Implémentation}
     \paragraph{}
-    \subsection{r�sultats}
+    La parallélisation du code ce fait au sein de l'algorithme de \emph{Branch \& Bound}. Dans cette fonction, si la précision n'est pas suffisante, l'espace cubique contenant la fonction est coupé en 4 sous-espaces et la fonction est rappelée récursivement sur ces sous-boites. Nous parallélisons donc l'appelle récursif de cette fonction. A chaque appelle de la fonction, 4 exécutions parallèles de code sont donc lancés.
+    
+    Ces exécutions parallèles accèdent à une variable commune qu'il faut donc protéger : la liste de minimum courant. Nous utilisons donc un \emph{pragma} définissant une section critique à chaque fois que la variable est modifiée au sein de la fonction parallélisée.
+    \subsection{résultats}
     \paragraph{}
     
 \section{Conclusion}

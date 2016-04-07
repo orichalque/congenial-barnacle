@@ -15,6 +15,7 @@
 #define __interval_h__
 
 #include <iosfwd>
+#include <cmath>  
 #include <limits>
 
 class interval {
