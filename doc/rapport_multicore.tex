@@ -34,9 +34,7 @@
     \end{center}
     \paragraph{}
     L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace. Cette parallélisation n'est pas efficace dans le cas ou les minimums possibles se retrouve rapidement dans un espace délimité par un des processus. Au contraire, Si la fonction est fluctuante, les minimums possibles seront distribués sur chaque processus ce qui augmentera son efficacité.
-    \subsection{résultats}
-    \paragraph{}
-    
+
 \section{Parallélisme à mémoire partagée avec \emph{OpenMP}}
 	\paragraph{}
 	Nous avons choisis \emph{OpenMP} pour la parallélisation à mémoire partagée car il très facile d'utilisation. De plus, l'utilisation de \emph{pragma} permet à l'utilisateur d'utiliser le code source sans forcement posséder la librairie \emph{OpenMP}. Malgré sa souplesse d'utilisation, il offre de bonnes performances.
@@ -45,8 +43,22 @@
     La parallélisation du code ce fait au sein de l'algorithme de \emph{Branch \& Bound}. Dans cette fonction, si la précision n'est pas suffisante, l'espace cubique contenant la fonction est coupé en 4 sous-espaces et la fonction est rappelée récursivement sur ces sous-boites. Nous parallélisons donc l'appelle récursif de cette fonction. A chaque appelle de la fonction, 4 exécutions parallèles de code sont donc lancés.
     
     Ces exécutions parallèles accèdent à une variable commune qu'il faut donc protéger : la liste de minimum courant. Nous utilisons donc un \emph{pragma} définissant une section critique à chaque fois que la variable est modifiée au sein de la fonction parallélisée.
-    \subsection{résultats}
-    \paragraph{}
+    
+\section{Résultats}
+	\paragraph{}
+	Les résultats suivants sont obtenus en comparant le temps d’exécution de nos version parallélisés avec celle de la version séquentielle. Deux exécutions MPI ont été faites, la première sur la même machine et la seconde en réseau locale sous 2 machines.
+\begin{center}
+\includegraphics[scale=0.7]{graph_booth.png}
+\end{center}
+
+\begin{center}
+\includegraphics[scale=0.7]{graph_thc.png}
+\end{center}
+
+mpi pas super
+fonction fluctuante -> meileurs perf mpi
+
+\paragraph{}
     
 \section{Conclusion}
     \paragraph{}

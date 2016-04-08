@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.3)  8 APR 2016 10:38
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.11.3)  8 APR 2016 11:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -432,13 +432,25 @@ Package pdftex.def Info: min_mpi.png used on input line 30.
 (pdftex.def)             Requested size: 183.38387pt x 286.66904pt.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./min_mpi.png>] [2]
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./min_mpi.png>]
+<graph_booth.png, id=19, 455.45157pt x 255.95625pt>
+File: graph_booth.png Graphic file (type png)
+ <use graph_booth.png>
+Package pdftex.def Info: graph_booth.png used on input line 49.
+(pdftex.def)             Requested size: 318.81392pt x 179.16814pt.
+
+<graph_thc.png, id=20, 455.45157pt x 255.95625pt>
+File: graph_thc.png Graphic file (type png)
+ <use graph_thc.png>
+Package pdftex.def Info: graph_thc.png used on input line 52.
+(pdftex.def)             Requested size: 318.81392pt x 179.16814pt.
+ [2 <./graph_booth.png (PNG copy)>] [3 <./graph_thc.png (PNG copy)>]
 (./rapport_multicore.aux) ) 
 Here is how much of TeX's memory you used:
- 4139 strings out of 494999
- 56304 string characters out of 6180228
- 119212 words of memory out of 5000000
- 7307 multiletter control sequences out of 15000+600000
+ 4149 strings out of 494999
+ 56482 string characters out of 6180228
+ 118212 words of memory out of 5000000
+ 7315 multiletter control sequences out of 15000+600000
  14592 words of font info for 34 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  38i,6n,32p,619b,229s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -452,10 +464,10 @@ comptes/E125757S/.texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk> </compt
 es/E125757S/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </comptes/E1
 25757S/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.600pk></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-Output written on rapport_multicore.pdf (2 pages, 81014 bytes).
+Output written on rapport_multicore.pdf (3 pages, 126603 bytes).
 PDF statistics:
- 257 PDF objects out of 1000 (max. 8388607)
- 46 compressed objects within 1 object stream
+ 262 PDF objects out of 1000 (max. 8388607)
+ 48 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
