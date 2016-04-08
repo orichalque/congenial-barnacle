@@ -39,7 +39,7 @@ void minimize(itvfun f,           // Function to minimize
               double &min_ub,     // Current minimum upper bound
               minimizer_list &ml) // List of current minimizers
 {
-  omp_set_num_threads(2);
+  omp_set_num_threads(4);
   interval fxy = f(x, y);
 
   if (fxy.left() > min_ub) { // Current box cannot contain minimum?
