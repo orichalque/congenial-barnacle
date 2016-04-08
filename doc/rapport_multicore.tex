@@ -33,7 +33,7 @@
     parallélisation MPI avec 3 processus (figure 1)\par}
     \end{center}
     \paragraph{}
-    L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace. Cette parallélisation n'est pas efficace dans le cas ou les minimums possibles se retrouve rapidement dans un espace délimité par un des processus (booth). Dans ce cas son efficacité est semblable à l'algorithme séquentiel. Au contraire, si la fonction est fluctuante (three hump camel), les minimums possibles seront distribués sur chaque processus ce qui augmentera son efficacité.
+    L’inconvénient de notre solution est qu'elle ne prend pas en compte la structure \emph{minimizer}. Pour régler ce problème, il faudrait que cette dernière soit partagée entre les processus \emph{MPI}. Chaque processus travail donc de façon indépendante sur son sous-espace. Cette parallélisation n'est pas efficace dans le cas ou les minimums possibles se retrouve rapidement dans un espace délimité par un des processus. Au contraire, Si la fonction est fluctuante, les minimums possibles seront distribués sur chaque processus ce qui augmentera son efficacité.
     \subsection{résultats}
     \paragraph{}
     
@@ -50,9 +50,9 @@
     
 \section{Conclusion}
     \paragraph{}
-    Les résultats de nos jeux d'essais montre que la parallélisation à mémoire partagée permet d'augmenter l'efficacité de l'algorithme de façon significative. Sans les comparer, les résultats de l'exécution de l'algorithme à l'aide de MPI ne permet pas d'améliorer significativement l'efficacité de l'algorithme. En effet, les essais ont été effectué sur un seul ordinateur.
+    Les résultats de nos jeux d'essais montre que la parallélisation à mémoire partagée permet d'augmenter l'efficacité de l'algorithme de façon significative. Sans les comparer, les résultats de l'exécution de l'algorithme à l'aide de MPI ne permet pas d'améliorer significativement l'efficacité de l'algorithme. En effet, Les processus travaillent séparément sans échanger leur minimums.
     
-    L'idéal serait d'allier MPI à la parallélisation à mémoire partagée. Dans ce cas, la boite serait distribuée en fonction du nombre de machines. De plus, chaque ordinateur découperait l'exécution sur ses \emph{threads physiques} disponibles. Cette double parallélisation du code pourrait entraîner une amélioration importante du temps de calcul.
+    L'idéal serait de doter notre solution MPI d'une fonction d’échange de minimum afin de faire collaborer les processus. Pour augmenter son efficacité, la parallélisation à mémoire partagée pourrait être ajoutée. Dans ce cas, la boite serait distribuée en fonction du nombre de machines. Puis, chaque ordinateur découperait l'exécution sur ses \emph{threads physiques} disponibles. Cette double parallélisation du code pourrait entraîner une amélioration importante du temps de calcul.
     
     
 
